@@ -5,7 +5,7 @@ const app = express();
 
 app.use(express.json({ limit: '10mb' }));
 
-app.post('/scraper/:method', async (req, res) => {
+app.post('/:method', async (req, res) => {
   try {
     const method = req.params.method;
     const params = req.body;

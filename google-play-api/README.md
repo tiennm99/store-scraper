@@ -4,6 +4,6 @@ Host [google-play-scraper](https://github.com/facundoolano/google-play-scraper) 
 
 ## Usage
 
-POST requests to `/scraper/:method` with raw JSON body parameters.
+POST requests to `/:method` with raw JSON body parameters.
 
 See [google-play-scraper documentation](https://github.com/facundoolano/google-play-scraper) for method parameters.
