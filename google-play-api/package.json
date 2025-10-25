@@ -1,5 +1,5 @@
 {
-  "name": "express",
+  "name": "miti-google-play-scraper",
   "type": "commonjs",
   "dependencies": {
     "express": "5.1.0",
