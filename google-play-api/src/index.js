@@ -1,5 +1,5 @@
 import express from 'express';
-import gplay from 'google-play-scraper/index.js';
+import gplay from 'google-play-scraper';
 
 const app = express();
 
