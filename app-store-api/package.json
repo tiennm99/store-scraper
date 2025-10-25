@@ -1,0 +1,8 @@
+{
+  "name": "miti-app-store-scraper",
+  "type": "module",
+  "dependencies": {
+    "express": "5.1.0",
+    "app-store-scraper": "0.18.0"
+  }
+}
