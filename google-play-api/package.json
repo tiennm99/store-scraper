@@ -1,6 +1,5 @@
 {
   "name": "miti-google-play-scraper",
-  "type": "module",
   "dependencies": {
     "express": "5.1.0",
     "google-play-scraper": "^10.1.0"
