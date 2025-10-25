@@ -1,5 +1,6 @@
-const express = require('express');
-const gplay = require('google-play-scraper');
+import express from 'express';
+import gplay from 'google-play-scraper';
+
 const app = express();
 
 app.use(express.json({ limit: '10mb' }));
@@ -7,7 +8,7 @@ app.use(express.json({ limit: '10mb' }));
 app.post('/scraper/:method', async (req, res) => {
   try {
     const method = req.params.method;
-    const params = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const params = req.body;
 
     if (!gplay[method]) {
       return res.status(400).json({
@@ -30,4 +31,4 @@ app.get('/', (req, res) => {
   });
 });
 
-module.exports = app;
+export default app;
