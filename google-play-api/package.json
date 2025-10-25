@@ -1,13 +1,8 @@
 {
   "name": "express",
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "express": "5.1.0",
     "google-play-scraper": "^10.1.0"
-  },
-  "devDependencies": {
-    "@types/express": "5.0.0",
-    "@types/node": "20.11.17",
-    "typescript": "5.8.3"
   }
 }
