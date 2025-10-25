@@ -1,5 +1,5 @@
-const express = require('express');
-const gplay = require('google-play-scraper');
+import express from 'express';
+import gplay from 'google-play-scraper/index.js';
 
 const app = express();
 
@@ -31,4 +31,4 @@ app.get('/', (req, res) => {
   });
 });
 
-module.exports = app;
+export default app;
