@@ -1,0 +1,24 @@
+{
+  "name": "store-scraper",
+  "version": "1.0.0",
+  "description": "Host [google-play-scraper](https://github.com/facundoolano/google-play-scraper) and [app-store-scraper](https://github.com/facundoolano/app-store-scraper)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiennm99/store-scraper.git"
+  },
+  "author": "miti99",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tiennm99/store-scraper/issues"
+  },
+  "homepage": "https://github.com/tiennm99/store-scraper#readme",
+  "dependencies": {
+    "app-store-scraper": "^0.18.0",
+    "express": "^5.1.0",
+    "google-play-scraper": "^10.1.2"
+  }
+}
