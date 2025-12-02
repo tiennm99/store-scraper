@@ -19,7 +19,7 @@
   "homepage": "https://github.com/tiennm99/store-scraper#readme",
   "dependencies": {
     "app-store-scraper": "^0.18.0",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "google-play-scraper": "^10.1.2"
   }
 }
