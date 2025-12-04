@@ -73,7 +73,8 @@ export default {
         );
 
       } catch (error) {
-        console.error("Error: ", error);
+        console.log("Error: " + JSON.stringify([error]));
+        console.error("Request failed!", error);
         return Response.json(
           { error: error.message },
           { status: 500 }
