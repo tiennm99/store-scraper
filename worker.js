@@ -1,87 +1,142 @@
 import store from 'app-store-scraper';
 import gplay from 'google-play-scraper';
 
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    const path = url.pathname;
+async function handleStoreRequest(request) {
+  const url = new URL(request.url);
+  const path = url.pathname;
 
-    // GET routes
-    if (request.method === 'GET') {
-      if (path === '/') {
-        return Response.json({
-          message: 'Store Scraper',
-          homepage: 'https://github.com/tiennm99/store-scraper'
-        });
+  // Root endpoint
+  if (path === '/') {
+    return new Response(JSON.stringify({
+      message: 'Store Scraper',
+      endpoints: {
+        apple: '/apple/',
+        google: '/google/'
       }
-
-      if (path === '/apple/' || path === '/apple') {
-        return Response.json({
-          message: 'App Store Scraper',
-          documentation: 'https://github.com/facundoolano/app-store-scraper'
-        });
-      }
-
-      if (path === '/google/' || path === '/google') {
-        return Response.json({
-          message: 'Google Play Scraper',
-          documentation: 'https://github.com/facundoolano/google-play-scraper'
-        });
-      }
-    }
-
-    // POST routes
-    if (request.method === 'POST') {
-      try {
-        const body = await request.json();
-        const pathParts = path.split('/').filter(p => p);
-
-        if (pathParts.length !== 2) {
-          return Response.json(
-            { error: 'Invalid path format' },
-            { status: 400 }
-          );
-        }
-
-        const [platform, method] = pathParts;
-
-        if (platform === 'apple') {
-          if (!store[method]) {
-            return Response.json(
-              { error: `Method '${method}' not supported` },
-              { status: 400 }
-            );
-          }
-          const result = await store[method](body);
-          return Response.json(result);
-        }
-
-        if (platform === 'google') {
-          if (!gplay[method]) {
-            return Response.json(
-              { error: `Method '${method}' not supported` },
-              { status: 400 }
-            );
-          }
-          const result = await gplay[method](body);
-          return Response.json(result);
-        }
-
-        return Response.json(
-          { error: 'Invalid platform' },
-          { status: 400 }
-        );
-
-      } catch (error) {
-        console.log("Error: " + JSON.stringify([error]));
-        console.error("Request failed!", error);
-        return Response.json(
-          { error: error.message },
-          { status: 500 }
-        );
-      }
-    }
-
-    return new Response('Not Found', { status: 404 });
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-};
+
+  // Apple Store info endpoint
+  if (path === '/apple/') {
+    return new Response(JSON.stringify({
+      message: 'App Store Scraper',
+      documentation: 'https://github.com/facundoolano/app-store-scraper',
+      usage: 'POST /apple/{method} with JSON body containing parameters'
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // Google Play info endpoint
+  if (path === '/google/') {
+    return new Response(JSON.stringify({
+      message: 'Google Play Scraper',
+      documentation: 'https://github.com/facundoolano/google-play-scraper',
+      usage: 'POST /google/{method} with JSON body containing parameters'
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // Apple Store scraper methods
+  if (path.startsWith('/apple/') && request.method === 'POST') {
+    const method = path.split('/apple/')[1];
+
+    try {
+      const params = await request.json();
+
+      if (!store[method]) {
+        return new Response(JSON.stringify({
+          error: `Method '${method}' not supported`
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      const result = await store[method](params);
+
+      return new Response(JSON.stringify(result), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    } catch (error) {
+      console.error('Apple Store API error:', error);
+      return new Response(JSON.stringify({
+        error: error.message
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // Google Play scraper methods
+  if (path.startsWith('/google/') && request.method === 'POST') {
+    const method = path.split('/google/')[1];
+
+    try {
+      const params = await request.json();
+
+      if (!gplay[method]) {
+        return new Response(JSON.stringify({
+          error: `Method '${method}' not supported`
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      const result = await gplay[method](params);
+
+      return new Response(JSON.stringify(result), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    } catch (error) {
+      console.error('Google Play API error:', error);
+      return new Response(JSON.stringify({
+        error: error.message
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // 404 for unknown paths
+  return new Response(JSON.stringify({
+    error: 'Not found'
+  }), {
+    status: 404,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function handleOptions(request) {
+  const reqAllowHeaders = request.headers.get("Access-Control-Request-Headers");
+  const allowHeaders = reqAllowHeaders ? reqAllowHeaders : "Content-Type";
+
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, HEAD",
+    "Access-Control-Allow-Headers": allowHeaders,
+    "Access-Control-Max-Age": "86400",
+  };
+
+  return new Response(null, { status: 204, headers });
+}
+
+addEventListener("fetch", event => {
+  if (event.request.method === "OPTIONS") {
+    event.respondWith(handleOptions(event.request));
+  } else {
+    event.respondWith(handleStoreRequest(event.request));
+  }
+});
