@@ -21,8 +21,5 @@
     "app-store-scraper": "^0.18.0",
     "express": "^5.2.0",
     "google-play-scraper": "^10.1.2"
-  },
-  "devDependencies": {
-    "wrangler": "^4.52.1"
   }
 }
