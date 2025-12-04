@@ -4,77 +4,78 @@ import gplay from 'google-play-scraper';
 export default {
   async fetch(request) {
     const url = new URL(request.url);
+    const path = url.pathname;
 
+    // GET routes
     if (request.method === 'GET') {
-      if (url.pathname === '/') {
+      if (path === '/') {
         return Response.json({
           message: 'Store Scraper',
           homepage: 'https://github.com/tiennm99/store-scraper'
         });
-      } else if (url.pathname === '/apple/') {
+      }
+
+      if (path === '/apple/' || path === '/apple') {
         return Response.json({
           message: 'App Store Scraper',
           documentation: 'https://github.com/facundoolano/app-store-scraper'
         });
-      } else if (url.pathname === '/google/') {
+      }
+
+      if (path === '/google/' || path === '/google') {
         return Response.json({
           message: 'Google Play Scraper',
           documentation: 'https://github.com/facundoolano/google-play-scraper'
         });
       }
-    } else if (request.method === 'POST') {
+    }
+
+    // POST routes
+    if (request.method === 'POST') {
       try {
         const body = await request.json();
-        const action = url.pathname.split('/')[2];
+        const pathParts = path.split('/').filter(p => p);
 
-        if (url.pathname.startsWith('/apple/')) {
-          switch (action) {
-            case 'app':
-              return Response.json(await store.app(body));
-            case 'search':
-              return Response.json(await store.search(body));
-            case 'suggest':
-              return Response.json(await store.suggest(body));
-            case 'reviews':
-              return Response.json(await store.reviews(body));
-            case 'similar':
-              return Response.json(await store.similar(body));
-            case 'developer':
-              return Response.json(await store.developer(body));
-            case 'list':
-              return Response.json(await store.list(body));
-            default:
-              return Response.json({ error: 'Invalid Apple Store method' }, { status: 400 });
-          }
+        if (pathParts.length !== 2) {
+          return Response.json(
+            { error: 'Invalid path format' },
+            { status: 400 }
+          );
         }
 
-        if (url.pathname.startsWith('/google/')) {
-          switch (action) {
-            case 'app':
-              return Response.json(await gplay.app(body));
-            case 'search':
-              return Response.json(await gplay.search(body));
-            case 'suggest':
-              return Response.json(await gplay.suggest(body));
-            case 'reviews':
-              return Response.json(await gplay.reviews(body));
-            case 'similar':
-              return Response.json(await gplay.similar(body));
-            case 'developer':
-              return Response.json(await gplay.developer(body));
-            case 'permissions':
-              return Response.json(await gplay.permissions(body));
-            case 'categories':
-              return Response.json(await gplay.categories());
-            default:
-              return Response.json({ error: 'Invalid Play Store method' }, { status: 400 });
+        const [platform, method] = pathParts;
+
+        if (platform === 'apple') {
+          if (!store[method]) {
+            return Response.json(
+              { error: `Method '${method}' not supported` },
+              { status: 400 }
+            );
           }
+          const result = await store[method](body);
+          return Response.json(result);
         }
+
+        if (platform === 'google') {
+          if (!gplay[method]) {
+            return Response.json(
+              { error: `Method '${method}' not supported` },
+              { status: 400 }
+            );
+          }
+          const result = await gplay[method](body);
+          return Response.json(result);
+        }
+
+        return Response.json(
+          { error: 'Invalid platform' },
+          { status: 400 }
+        );
 
       } catch (error) {
         return Response.json(
           { error: error.message },
-          { status: 400 }
+          { status: 500 }
         );
       }
     }
