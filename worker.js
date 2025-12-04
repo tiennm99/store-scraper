@@ -133,10 +133,11 @@ function handleOptions(request) {
   return new Response(null, { status: 204, headers });
 }
 
-addEventListener("fetch", event => {
-  if (event.request.method === "OPTIONS") {
-    event.respondWith(handleOptions(event.request));
-  } else {
-    event.respondWith(handleStoreRequest(event.request));
+export default {
+  async fetch(request, env, ctx) {
+    if (request.method === "OPTIONS") {
+      return handleOptions(request);
+    }
+    return handleStoreRequest(request);
   }
-});
+};
