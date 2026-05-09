@@ -27,6 +27,7 @@ app.post('/:method', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     message: 'App Store Scraper',
+    homepage: 'https://github.com/tiennm99/app-store-scraper-api',
     documentation: 'https://github.com/facundoolano/app-store-scraper'
   });
 });
