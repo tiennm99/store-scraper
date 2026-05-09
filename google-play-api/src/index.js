@@ -27,6 +27,7 @@ app.post('/:method', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     message: 'Google Play Scraper',
+    homepage: 'https://github.com/tiennm99/google-play-scraper-api',
     documentation: 'https://github.com/facundoolano/google-play-scraper'
   });
 });
